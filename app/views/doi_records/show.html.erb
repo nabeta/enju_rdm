@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Identifier:</strong>
+  <%= @doi_record.identifier %>
+</p>
+
+<p>
+  <strong>Dataset:</strong>
+  <%= @doi_record.dataset_id %>
+</p>
+
+<%= link_to 'Edit', edit_doi_record_path(@doi_record) %> |
+<%= link_to 'Back', doi_records_path %>

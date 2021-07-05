@@ -1,0 +1,17 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Dataset:</strong>
+  <%= link_to @fileset.dataset_id, @fileset.dataset %>
+</p>
+
+<p>
+  <%= link_to 'Download', rails_blob_path(@fileset.attachment) %>
+</p>
+
+<p>
+  <%= image_tag @fileset.attachment.variant(resize: "300x300>") if @fileset.attachment.variable? %>
+</p>
+
+<%= link_to 'Edit', edit_fileset_path(@fileset) %> |
+<%= link_to 'Back', filesets_path %>

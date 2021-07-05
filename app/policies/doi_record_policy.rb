@@ -1,0 +1,2 @@
+class DoiRecordPolicy < ApplicationPolicy
+end

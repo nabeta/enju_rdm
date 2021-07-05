@@ -1,0 +1,2 @@
+module DoiRecordsHelper
+end

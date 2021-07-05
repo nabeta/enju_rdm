@@ -1,0 +1,2 @@
+class FilesetPolicy < ApplicationPolicy
+end

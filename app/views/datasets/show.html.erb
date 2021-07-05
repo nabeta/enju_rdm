@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @dataset.title %>
+</p>
+
+<p>
+  <strong>Alternative title:</strong>
+  <%= @dataset.alternative_title %>
+</p>
+
+<p>
+  <strong>Publisher:</strong>
+  <%= @dataset.publisher %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @dataset.user_id %>
+</p>
+
+<ul>
+  <% @dataset.filesets.each do |fileset| %>
+    <li>
+      <%= link_to fileset.id, fileset %>
+      <br>
+      <%= image_tag fileset.attachment.variant(resize: "300x300>") if fileset.attachment.variable? %>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to 'New Fileset', new_fileset_path(dataset_id: @dataset.id) %> |
+<%= link_to 'Edit', edit_dataset_path(@dataset) %> |
+<%= link_to 'Back', datasets_path %>

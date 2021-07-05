@@ -1,0 +1,27 @@
+<%= form_with(model: doi_record) do |form| %>
+  <% if doi_record.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(doi_record.errors.count, "error") %> prohibited this doi_record from being saved:</h2>
+
+      <ul>
+        <% doi_record.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :identifier %>
+    <%= form.text_field :identifier %>
+  </div>
+
+  <div class="field">
+    <%= form.label :dataset_id %>
+    <%= form.text_field :dataset_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

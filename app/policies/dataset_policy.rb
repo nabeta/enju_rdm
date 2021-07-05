@@ -1,0 +1,2 @@
+class DatasetPolicy < ApplicationPolicy
+end
