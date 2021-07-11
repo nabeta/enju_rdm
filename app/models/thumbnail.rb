@@ -1,15 +1,15 @@
-class Fileset < ApplicationRecord
+class Thumbnail < ApplicationRecord
   belongs_to :dataset
-  has_one :thumbnail
-  has_one_attached :attachment
+  belongs_to :fileset
 end
 
 # == Schema Information
 #
-# Table name: filesets
+# Table name: thumbnails
 #
 #  id         :uuid             not null, primary key
 #  dataset_id :uuid             not null
+#  fileset_id :uuid             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

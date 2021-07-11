@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :reviews
+  resources :collections
   resources :doi_records
   get 'page/home'
   resources :filesets

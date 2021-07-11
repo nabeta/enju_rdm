@@ -1,6 +1,6 @@
 require "test_helper"
 
-class DatasetTest < ActiveSupport::TestCase
+class CollectionTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
@@ -8,12 +8,11 @@ end
 
 # == Schema Information
 #
-# Table name: datasets
+# Table name: collections
 #
 #  id              :uuid             not null, primary key
-#  json_attributes :jsonb            not null
+#  json_attributes :jsonb
 #  user_id         :uuid             not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  visibility      :integer          default(1), not null
 #

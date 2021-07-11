@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_05_020046) do
+ActiveRecord::Schema.define(version: 2021_07_11_112145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -44,12 +44,43 @@ ActiveRecord::Schema.define(version: 2021_07_05_020046) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "collection_and_datasets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "collection_id", null: false
+    t.uuid "dataset_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["collection_id"], name: "index_collection_and_datasets_on_collection_id"
+    t.index ["dataset_id"], name: "index_collection_and_datasets_on_dataset_id"
+  end
+
+  create_table "collections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "json_attributes"
+    t.uuid "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_collections_on_user_id"
+  end
+
+  create_table "dataset_transitions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "to_state", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.integer "sort_key", null: false
+    t.uuid "dataset_id", null: false
+    t.boolean "most_recent", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_id", "most_recent"], name: "index_dataset_transitions_parent_most_recent", unique: true, where: "most_recent"
+    t.index ["dataset_id", "sort_key"], name: "index_dataset_transitions_parent_sort", unique: true
+  end
+
   create_table "datasets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.jsonb "json_attributes", default: {}, null: false
     t.uuid "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "visibility", default: 1, null: false
     t.index ["user_id"], name: "index_datasets_on_user_id"
+    t.index ["visibility"], name: "index_datasets_on_visibility"
   end
 
   create_table "doi_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -74,6 +105,24 @@ ActiveRecord::Schema.define(version: 2021_07_05_020046) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "reviews", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "dataset_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_id"], name: "index_reviews_on_dataset_id"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
+
+  create_table "thumbnails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "dataset_id", null: false
+    t.uuid "fileset_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_id"], name: "index_thumbnails_on_dataset_id"
+    t.index ["fileset_id"], name: "index_thumbnails_on_fileset_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -101,8 +150,16 @@ ActiveRecord::Schema.define(version: 2021_07_05_020046) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "collection_and_datasets", "collections"
+  add_foreign_key "collection_and_datasets", "datasets"
+  add_foreign_key "collections", "users"
+  add_foreign_key "dataset_transitions", "datasets"
   add_foreign_key "datasets", "users"
   add_foreign_key "doi_records", "datasets"
   add_foreign_key "filesets", "datasets"
   add_foreign_key "profiles", "users"
+  add_foreign_key "reviews", "datasets"
+  add_foreign_key "reviews", "users"
+  add_foreign_key "thumbnails", "datasets"
+  add_foreign_key "thumbnails", "filesets"
 end

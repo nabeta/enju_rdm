@@ -61,10 +61,21 @@ gem 'attr_json'
 gem 'kaminari'
 gem 'statesman'
 gem 'paper_trail'
+gem 'rails_autolink'
+gem 'rouge'
+gem 'resque'
+gem 'cocoon'
+gem 'ro-crate', require: 'ro_crate'
+gem 'sitemap_generator'
+gem 'dotenv-rails'
+gem 'linkeddata'
 
 group :development, :test do
   gem 'annotate'
   gem 'factory_bot_rails'
 end
 
-gem 'simplecov', require: false, group: :test
+group :test do
+  gem 'simplecov', require: false
+  gem 'vcr', require: false
+end
