@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2021_07_11_112145) do
   end
 
   create_table "collections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.jsonb "json_attributes"
+    t.jsonb "json_attributes", default: {}, null: false
     t.uuid "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

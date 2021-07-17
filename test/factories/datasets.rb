@@ -13,5 +13,5 @@ end
 #  user_id         :uuid             not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  visibility      :integer          default(1), not null
+#  visibility      :integer          default("closed"), not null
 #

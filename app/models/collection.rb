@@ -14,7 +14,7 @@ end
 # Table name: collections
 #
 #  id              :uuid             not null, primary key
-#  json_attributes :jsonb
+#  json_attributes :jsonb            not null
 #  user_id         :uuid             not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

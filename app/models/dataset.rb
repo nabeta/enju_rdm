@@ -24,6 +24,19 @@ class Dataset < ApplicationRecord
 
   attr_json_accepts_nested_attributes_for :creators, :related_identifiers
 
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
+
+  settings do
+    mappings dynamic: 'false' do
+      indexes :title, type: 'text'
+    end
+  end
+
+  def as_indexed_json(options = {})
+    attributes.symbolize_keys.slice(:id, :visibility) #.merge(title: title, visibility: visibility)
+  end
+
   include Statesman::Adapters::ActiveRecordQueries[
     transition_class: DatasetTransition,
     initial_state: :pending
@@ -43,5 +56,5 @@ end
 #  user_id         :uuid             not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  visibility      :integer          default(1), not null
+#  visibility      :integer          default("closed"), not null
 #

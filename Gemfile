@@ -69,6 +69,8 @@ gem 'ro-crate', require: 'ro_crate'
 gem 'sitemap_generator'
 gem 'dotenv-rails'
 gem 'linkeddata'
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
 
 group :development, :test do
   gem 'annotate'

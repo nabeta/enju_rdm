@@ -19,3 +19,17 @@ class DatasetTransition < ApplicationRecord
     last_transition.update_column(:most_recent, true)
   end
 end
+
+# == Schema Information
+#
+# Table name: dataset_transitions
+#
+#  id          :uuid             not null, primary key
+#  to_state    :string           not null
+#  metadata    :jsonb            not null
+#  sort_key    :integer          not null
+#  dataset_id  :uuid             not null
+#  most_recent :boolean          not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
