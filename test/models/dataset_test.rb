@@ -1,9 +1,13 @@
 require "test_helper"
 
 class DatasetTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  setup do
+    @dataset = FactoryBot.create(:dataset)
+  end
+
+  test "export_to_ro_crate" do
+    assert @dataset.export_to_ro_crate
+  end
 end
 
 # == Schema Information

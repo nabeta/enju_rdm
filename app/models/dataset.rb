@@ -1,6 +1,7 @@
 class Dataset < ApplicationRecord
   belongs_to :user
-  has_many :filesets
+  has_many :filesets, dependent: :destroy
+  has_one :thumbnail, dependent: :destroy
   has_one :doi_record
   has_many :collection_and_datasets, dependent: :destroy
   has_many :collections, through: :collection_and_datasets
@@ -18,7 +19,7 @@ class Dataset < ApplicationRecord
   attr_json :publisher, :string
   attr_json :creators, Agent.to_type, array: true, default: [Agent.new]
   attr_json :description, :string
-  attr_json :keywords, :string, array: true
+  attr_json :keywords, :string, array: true, default: []
   attr_json :language, :string
   attr_json :related_identifiers, RelatedIdentifier.to_type, array: true, default: [RelatedIdentifier.new]
 
@@ -44,6 +45,26 @@ class Dataset < ApplicationRecord
 
   def state_machine
     @state_machine ||= DatasetStateMachine.new(self, transition_class: DatasetTransition)
+  end
+
+  def export_to_ro_crate
+    crate = ROCrate::Crate.new
+    filesets.each do |fileset|
+      crate.add_file(ActiveStorage::Blob.service.path_for(fileset.attachment.key), fileset.attachment.filename.to_s)
+    end
+
+    Tempfile.create(id) do |f|
+      Zip::File.open(f, Zip::File::CREATE) do |zip|
+        crate.entries.each do |path, entry|
+          next if entry.directory?
+          zip.get_output_stream(path) { |s| entry.write(s) }
+        end
+      end
+
+      attachment.attach(io: File.open(f), filename: "#{id}.zip")
+    end
+
+    attachment
   end
 end
 
