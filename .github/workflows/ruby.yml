@@ -24,6 +24,7 @@ jobs:
       PGHOST: postgres
       RAILS_ENV: test
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     services:
       postgres:
         image: postgres
