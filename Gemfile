@@ -71,6 +71,7 @@ gem 'dotenv-rails'
 gem 'linkeddata'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
+gem 'elasticsearch-dsl'
 
 group :development, :test do
   gem 'annotate'
@@ -80,4 +81,5 @@ end
 group :test do
   gem 'simplecov', require: false
   gem 'vcr', require: false
+  gem 'webmock'
 end

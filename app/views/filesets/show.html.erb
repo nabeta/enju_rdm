@@ -2,7 +2,7 @@
 
 <p>
   <strong>Dataset:</strong>
-  <%= link_to @fileset.dataset_id, @fileset.dataset %>
+  <%= link_to @fileset.dataset.title, @fileset.dataset %>
 </p>
 
 <p>
@@ -10,7 +10,11 @@
 </p>
 
 <p>
-  <%= image_tag @fileset.attachment.variant(resize: "300x300>") if @fileset.attachment.variable? %>
+  <% if @fileset.attachment.previewable? %>
+    <%= link_to image_tag(@fileset.attachment.preview(resize: "300x300>")), @fileset.attachment if @fileset.attachment.previewable? %>
+  <% elsif @fileset.attachment.variable? %>
+    <%= link_to image_tag(@fileset.attachment.variant(resize: "300x300>")), @fileset.attachment if @fileset.attachment.variable? %>
+  <% end %>
 </p>
 
 <%= link_to 'Edit', edit_fileset_path(@fileset) %> |

@@ -4,7 +4,6 @@ class ProfilesController < ApplicationController
 
   # GET /profiles or /profiles.json
   def index
-    authorize Profile
     @profiles = policy_scope(Profile).page(params[:page])
   end
 
@@ -14,7 +13,6 @@ class ProfilesController < ApplicationController
 
   # GET /profiles/new
   def new
-    authorize Profile
     @profile = Profile.new
   end
 

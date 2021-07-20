@@ -2,6 +2,15 @@
 
 <h1>Datasets</h1>
 
+<div class="form-group row justify-content-md-center">
+  <%= form_tag(datasets_path, method: :get, class: "form-inline") do %>
+    <div class="row mb-2">
+      <%= search_field_tag :q, @q, class: "form-control", style: "width: 40em" %>
+      <%= submit_tag 'Search', class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>
+
 <table class="table">
   <thead>
     <tr>

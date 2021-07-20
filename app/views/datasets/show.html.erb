@@ -23,13 +23,18 @@
 <ul>
   <% @dataset.filesets.each do |fileset| %>
     <li>
-      <%= link_to fileset.id, fileset %>
+      <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
       <br>
-      <%= image_tag fileset.attachment.variant(resize: "300x300>") if fileset.attachment.variable? %>
+      <% if fileset.attachment.previewable? %>
+        <%= link_to image_tag(fileset.attachment.preview(resize: "300x300>")), fileset if fileset.attachment.previewable? %>
+      <% elsif fileset.attachment.variable? %>
+        <%= link_to image_tag(fileset.attachment.variant(resize: "300x300>")), fileset if fileset.attachment.variable? %>
+      <% end %>
     </li>
   <% end %>
 </ul>
 
 <%= link_to 'New Fileset', new_fileset_path(dataset_id: @dataset.id) %> |
 <%= link_to 'Edit', edit_dataset_path(@dataset) %> |
+<%= link_to 'Destroy', dataset_path(@dataset), method: :delete, data: { confirm: 'Are you sure?' } %>
 <%= link_to 'Back', datasets_path %>

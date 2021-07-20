@@ -4,11 +4,46 @@ class DatasetsController < ApplicationController
 
   # GET /datasets or /datasets.json
   def index
-    @datasets = policy_scope(Dataset).page(params[:page])
+    @q = params[:q]
+    search_condition = Elasticsearch::DSL::Search.search do
+      query do
+        bool do
+          must do
+            query_string do
+              query params[:q].blank? ? "*:*" : params[:q]
+              fields ['title', 'keyword', 'collection']
+              default_operator 'and'
+            end
+
+            filter do
+              term visibility: "closed"
+            end
+
+            sort updated_at: "desc"
+          end
+        end
+      end
+
+      aggregation :keyword_count do
+        terms do
+          field 'keyword'
+          size 20
+        end
+      end
+    end
+
+    search = Dataset.__elasticsearch__.search(search_condition)
+    @datasets = search.page(params[:page]).per(10).records
+    @dataset_facets = search.aggregations
   end
 
   # GET /datasets/1 or /datasets/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json
+      format.zip { send_data @dataset.attachment.download, content_type: 'application/x-zip-compressed' }
+    end
   end
 
   # GET /datasets/new
@@ -61,7 +96,13 @@ class DatasetsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_dataset
-      @dataset = Dataset.find(params[:id])
+      dataset = Dataset.find(params[:id])
+      if params[:version].present?
+        @dataset = dataset.versions.where(event: :update).find(params[:version]).reify
+      else
+        @dataset = dataset
+      end
+
       authorize @dataset
     end
 
@@ -71,6 +112,6 @@ class DatasetsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def dataset_params
-      params.require(:dataset).permit(:title, :alternative_title, :publisher)
+      params.require(:dataset).permit(:title, :alternative_title, :publisher, :readme)
     end
 end

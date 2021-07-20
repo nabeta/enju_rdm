@@ -26,16 +26,54 @@ class Dataset < ApplicationRecord
   attr_json_accepts_nested_attributes_for :creators, :related_identifiers
 
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
-  settings do
+  index_name "dataset_#{Rails.env}"
+
+  after_commit on: [:create] do
+    __elasticsearch__.index_document
+  end
+
+  after_commit on: [:update] do
+    __elasticsearch__.update_document
+  end
+
+  after_commit on: [:destroy] do
+    __elasticsearch__.delete_document
+  end
+
+  settings index: {
+    analysis: {
+      analyzer: {
+        ngram: {
+          tokenizer: 'ngram'
+        }
+      },
+      tokenizer: {
+        ngram: {
+          type: 'ngram',
+          min_gram: 2,
+          max_gram: 2
+        }
+      }
+    }
+  } do
+
     mappings dynamic: 'false' do
-      indexes :title, type: 'text'
+      indexes :title, type: 'text', analyzer: 'ngram'
+      indexes :keyword, type: 'keyword'
+      indexes :collection, type: 'text'
+      indexes :visibility, type: 'text'
+      indexes :created_at, type: 'date'
+      indexes :updated_at, type: 'date'
     end
   end
 
   def as_indexed_json(options = {})
-    attributes.symbolize_keys.slice(:id, :visibility) #.merge(title: title, visibility: visibility)
+    attributes.symbolize_keys.slice(:id, :visibility, :created_at, :updated_at).merge(
+      title: title,
+      keyword: keywords,
+      collection: collections.map(&:id)
+    )
   end
 
   include Statesman::Adapters::ActiveRecordQueries[
@@ -65,6 +103,13 @@ class Dataset < ApplicationRecord
     end
 
     attachment
+  end
+
+  def to_jsonld(url: nil)
+    statement = RDF::Statement(RDF::URI(url), RDF::Vocab::DC.title, RDF::Literal(title))
+    graph = RDF::Graph.new
+    graph << statement
+    graph.dump(:jsonld, standard_prefixes: true)
   end
 end
 

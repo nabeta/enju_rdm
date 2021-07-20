@@ -15,7 +15,7 @@ class CollectionsTest < ApplicationSystemTestCase
     visit collections_url
     click_on "New Collection"
 
-    fill_in "Json attributes", with: @collection.json_attributes
+    fill_in "Title", with: @collection.title
     fill_in "User", with: @collection.user_id
     click_on "Create Collection"
 
@@ -27,7 +27,7 @@ class CollectionsTest < ApplicationSystemTestCase
     visit collections_url
     click_on "Edit", match: :first
 
-    fill_in "Json attributes", with: @collection.json_attributes
+    fill_in "Title", with: @collection.title
     fill_in "User", with: @collection.user_id
     click_on "Update Collection"
 

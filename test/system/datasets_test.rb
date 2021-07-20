@@ -23,7 +23,7 @@ class DatasetsTest < ApplicationSystemTestCase
   end
 
   test "updating a Dataset" do
-    visit datasets_url
+    visit dataset_url(@dataset)
     click_on "Edit", match: :first
 
     fill_in "Title", with: @dataset.title
@@ -34,7 +34,7 @@ class DatasetsTest < ApplicationSystemTestCase
   end
 
   test "destroying a Dataset" do
-    visit datasets_url
+    visit dataset_url(@dataset)
     page.accept_confirm do
       click_on "Destroy", match: :first
     end

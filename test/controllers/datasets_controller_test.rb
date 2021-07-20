@@ -4,6 +4,8 @@ class DatasetsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @dataset = FactoryBot.create(:dataset)
     login_as(users(:one))
+    Dataset.__elasticsearch__.refresh_index!
+    Dataset.import
   end
 
   test "should get index" do

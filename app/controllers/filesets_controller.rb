@@ -4,7 +4,6 @@ class FilesetsController < ApplicationController
 
   # GET /filesets or /filesets.json
   def index
-    authorize Fileset
     @filesets = policy_scope(Fileset).page(params[:page])
   end
 
@@ -14,7 +13,6 @@ class FilesetsController < ApplicationController
 
   # GET /filesets/new
   def new
-    authorize Fileset
     @dataset = Dataset.find_by(id: params[:dataset_id])
     @fileset = Fileset.new(dataset: @dataset)
   end
@@ -25,7 +23,6 @@ class FilesetsController < ApplicationController
 
   # POST /filesets or /filesets.json
   def create
-    authorize Fileset
     @fileset = Fileset.new(fileset_params)
 
     respond_to do |format|
