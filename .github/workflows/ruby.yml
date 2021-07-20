@@ -23,11 +23,11 @@ jobs:
     env:
       PGHOST: postgres
       RAILS_ENV: test
+      POSTGRES_USER: postgres
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
