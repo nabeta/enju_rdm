@@ -224,7 +224,7 @@ GEM
       shex (~> 0.6, >= 0.6.1)
       sparql (~> 3.1, >= 3.1.5)
       sparql-client (~> 3.1, >= 3.1.2)
-    listen (3.5.1)
+    listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.10.0)
@@ -538,7 +538,7 @@ DEPENDENCIES
   webpacker (~> 5.0)
 
 RUBY VERSION
-   ruby 2.7.2p137
+   ruby 2.7.3p183
 
 BUNDLED WITH
    2.1.4
