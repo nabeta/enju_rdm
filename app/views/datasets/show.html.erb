@@ -1,40 +1,62 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @dataset.title %>
-</p>
+<div class="row">
+  <div class="col-3 p-3">
+    <% if @dataset.attachment.attached? %>
+      <p>
+        <%= link_to 'Download', rails_blob_path(@dataset.attachment) %>
+      </p>
+    <% end %>
 
-<p>
-  <strong>Alternative title:</strong>
-  <%= @dataset.alternative_title %>
-</p>
+    <ul>
+      <li><%= link_to 'New Fileset', new_fileset_path(dataset_id: @dataset.id) %></li>
+      <li><%= link_to 'Edit', edit_dataset_path(@dataset) %></li>
+      <li><%= link_to 'Destroy', dataset_path(@dataset), method: :delete, data: { confirm: 'Are you sure?' } %></li>
+      <li><%= link_to 'Back', datasets_path %></li>
+    </ul>
+  </div>
 
-<p>
-  <strong>Publisher:</strong>
-  <%= @dataset.publisher %>
-</p>
+  <div class="col-9 p-3">
+    <p>
+      <strong>Title:</strong>
+      <%= @dataset.title %>
+    </p>
 
-<p>
-  <strong>User:</strong>
-  <%= @dataset.user_id %>
-</p>
+    <p>
+      <strong>Alternative title:</strong>
+      <%= @dataset.alternative_title %>
+    </p>
 
-<ul>
-  <% @dataset.filesets.each do |fileset| %>
-    <li>
-      <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
-      <br>
-      <% if fileset.attachment.previewable? %>
-        <%= link_to image_tag(fileset.attachment.preview(resize: "300x300>")), fileset if fileset.attachment.previewable? %>
-      <% elsif fileset.attachment.variable? %>
-        <%= link_to image_tag(fileset.attachment.variant(resize: "300x300>")), fileset if fileset.attachment.variable? %>
+    <p>
+      <strong>Publisher:</strong>
+      <%= @dataset.publisher %>
+    </p>
+
+    <p>
+      <strong>User:</strong>
+      <%= @dataset.user_id %>
+    </p>
+
+    <% if @dataset.attachment.attached? %>
+      <ul>
+        <% Zip::File.open(ActiveStorage::Blob.service.path_for(@dataset.attachment.key)).each do |entry| %>
+          <li><%= entry.name.force_encoding('UTF-8') %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <ul>
+      <% @dataset.filesets.each do |fileset| %>
+        <li>
+          <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
+          <br>
+          <% if fileset.attachment.previewable? %>
+            <%= link_to image_tag(fileset.attachment.preview(resize: "300x300>")), fileset if fileset.attachment.previewable? %>
+          <% elsif fileset.attachment.variable? %>
+            <%= link_to image_tag(fileset.attachment.variant(resize: "300x300>")), fileset if fileset.attachment.variable? %>
+          <% end %>
+        </li>
       <% end %>
-    </li>
-  <% end %>
-</ul>
-
-<%= link_to 'New Fileset', new_fileset_path(dataset_id: @dataset.id) %> |
-<%= link_to 'Edit', edit_dataset_path(@dataset) %> |
-<%= link_to 'Destroy', dataset_path(@dataset), method: :delete, data: { confirm: 'Are you sure?' } %>
-<%= link_to 'Back', datasets_path %>
+    </ul>
+  </div>
+</div>

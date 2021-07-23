@@ -2,11 +2,15 @@ require "test_helper"
 
 class DatasetTest < ActiveSupport::TestCase
   setup do
-    @dataset = FactoryBot.create(:dataset)
+    @dataset = FactoryBot.create(:fileset).dataset
   end
 
   test "export_to_ro_crate" do
     assert @dataset.export_to_ro_crate
+  end
+
+  test "to_jsonld" do
+    assert @dataset.to_jsonld
   end
 end
 

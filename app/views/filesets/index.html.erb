@@ -16,7 +16,7 @@
         <td>
           <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
           <br>
-          <%= link_to fileset.dataset_id, fileset.dataset %>
+          <%= link_to fileset.dataset.title, fileset.dataset %>
         </td>
         <td><%= link_to 'Edit', edit_fileset_path(fileset) %></td>
         <td><%= link_to 'Destroy', fileset, method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -10,6 +10,12 @@ class Dataset < ApplicationRecord
   has_one_attached :attachment
   has_paper_trail only: [:json_attributes]
 
+  after_commit do
+    if attachment.attached? && attachment_changes.empty?
+      export_to_ro_crate
+    end
+  end
+
   enum visibility: { closed: 1, restricted: 2, open: 3 }
 
   include AttrJson::Record
@@ -87,6 +93,9 @@ class Dataset < ApplicationRecord
 
   def export_to_ro_crate
     crate = ROCrate::Crate.new
+    crate.name = title
+    crate.publisher = publisher
+
     filesets.each do |fileset|
       crate.add_file(ActiveStorage::Blob.service.path_for(fileset.attachment.key), fileset.attachment.filename.to_s)
     end
