@@ -17,46 +17,81 @@
   </div>
 
   <div class="col-9 p-3">
-    <p>
-      <strong>Title:</strong>
-      <%= @dataset.title %>
-    </p>
-
-    <p>
-      <strong>Alternative title:</strong>
-      <%= @dataset.alternative_title %>
-    </p>
-
-    <p>
-      <strong>Publisher:</strong>
-      <%= @dataset.publisher %>
-    </p>
-
-    <p>
-      <strong>User:</strong>
-      <%= @dataset.user_id %>
-    </p>
-
-    <% if @dataset.attachment.attached? %>
-      <ul>
-        <% Zip::File.open(ActiveStorage::Blob.service.path_for(@dataset.attachment.key)).each do |entry| %>
-          <li><%= entry.name.force_encoding('UTF-8') %></li>
-        <% end %>
-      </ul>
-    <% end %>
-
-    <ul>
-      <% @dataset.filesets.each do |fileset| %>
-        <li>
-          <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
-          <br>
-          <% if fileset.attachment.previewable? %>
-            <%= link_to image_tag(fileset.attachment.preview(resize: "300x300>")), fileset if fileset.attachment.previewable? %>
-          <% elsif fileset.attachment.variable? %>
-            <%= link_to image_tag(fileset.attachment.variant(resize: "300x300>")), fileset if fileset.attachment.variable? %>
-          <% end %>
-        </li>
-      <% end %>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" role="tab" href="#metadata">Metadata</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" role="tab" href="#readme">README</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" role="tab" href="#history">History</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" role="tab" href="#json-ld">JSON-LD</a>
+      </li>
     </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane show active p-3" id="metadata" role="tabpanel">
+        <p>
+          <strong>Title:</strong>
+          <%= @dataset.title %>
+        </p>
+
+        <p>
+          <strong>Alternative title:</strong>
+          <%= @dataset.alternative_title %>
+        </p>
+
+        <p>
+          <strong>Publisher:</strong>
+          <%= @dataset.publisher %>
+        </p>
+
+        <p>
+          <strong>User:</strong>
+          <%= @dataset.user_id %>
+        </p>
+
+        <% if @dataset.attachment.attached? %>
+          <ul>
+            <% Zip::File.open(ActiveStorage::Blob.service.path_for(@dataset.attachment.key)).each do |entry| %>
+              <li><%= entry.name.force_encoding('UTF-8') %></li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <ul>
+          <% @dataset.filesets.each do |fileset| %>
+            <li>
+              <%= link_to fileset.attachment.filename, fileset if fileset.attachment.attached? %>
+              <br>
+              <% if fileset.attachment.previewable? %>
+                <%= link_to image_tag(fileset.attachment.preview(resize: "300x300>")), fileset if fileset.attachment.previewable? %>
+              <% elsif fileset.attachment.variable? %>
+                <%= link_to image_tag(fileset.attachment.variant(resize: "300x300>")), fileset if fileset.attachment.variable? %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="tab-pane" id="readme" role="tabpanel">
+        <div id="readme-content"></div>
+      </div>
+
+      <div class="tab-pane p-3" id="history" role="tabpanel">
+        <ul>
+          <% @dataset.versions.each do |version| %>
+            <li><%= version.id %></li>
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="tab-pane p-3" id="json-ld" role="tabpanel">
+        <pre><%= JSON.pretty_generate(JSON.parse(@dataset.to_jsonld(url: dataset_url(@dataset)))) %></pre>
+      </div>
+    </div>
   </div>
 </div>
