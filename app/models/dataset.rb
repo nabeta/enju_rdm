@@ -121,6 +121,12 @@ class Dataset < ApplicationRecord
     graph.dump(:jsonld, standard_prefixes: true)
   end
 
+  def ro_crate_jsonld
+    return unless attachment.attached?
+
+    JSON.parse(Zip::File.open(ActiveStorage::Blob.service.path_for(attachment.key)).glob('ro-crate-metadata.json').first.get_input_stream.read)
+  end
+
   def self.import_ro_crate(path, user: nil)
     crate = ROCrate::Reader.read(path)
     dataset = Dataset.new(title: crate.name)
