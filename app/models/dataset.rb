@@ -120,6 +120,14 @@ class Dataset < ApplicationRecord
     graph << statement
     graph.dump(:jsonld, standard_prefixes: true)
   end
+
+  def self.import_ro_crate(path, user: nil)
+    crate = ROCrate::Reader.read(path)
+    dataset = Dataset.new(title: crate.name)
+    dataset.attachment.attach(io: File.open(path), filename: File.basename(path))
+
+    dataset
+  end
 end
 
 # == Schema Information
