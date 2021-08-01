@@ -21,5 +21,7 @@ module EnjuRdm
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
+
+    config.hosts << ENV['ENJU_RDM_HOST_NAME']
   end
 end
