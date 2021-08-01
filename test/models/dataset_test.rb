@@ -12,6 +12,15 @@ class DatasetTest < ActiveSupport::TestCase
   test "to_jsonld" do
     assert @dataset.to_jsonld
   end
+
+  test "state_machine" do
+    assert_equal @dataset.state_machine.current_state, 'pending'
+  end
+
+  test "import_ro_crate" do
+    @dataset.export_to_ro_crate
+    assert Dataset.import_ro_crate(ActiveStorage::Blob.service.path_for(@dataset.attachment.key), user: @dataset.user)
+  end
 end
 
 # == Schema Information
