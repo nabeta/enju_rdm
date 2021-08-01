@@ -1,21 +1,43 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Dataset:</strong>
-  <%= link_to @fileset.dataset.title, @fileset.dataset %>
+  <strong>Filename:</strong>
+  <%= @fileset.attachment.filename %>
 </p>
 
-<p>
-  <%= link_to 'Download', rails_blob_path(@fileset.attachment) %>
-</p>
+<% if @fileset.attachment.attached? %>
+  <p>
+    <strong>Dataset:</strong>
+    <%= link_to @fileset.dataset.title, @fileset.dataset %>
+  </p>
 
-<p>
-  <% if @fileset.attachment.previewable? %>
-    <%= link_to image_tag(@fileset.attachment.preview(resize: "300x300>")), @fileset.attachment if @fileset.attachment.previewable? %>
-  <% elsif @fileset.attachment.variable? %>
-    <%= link_to image_tag(@fileset.attachment.variant(resize: "300x300>")), @fileset.attachment if @fileset.attachment.variable? %>
-  <% end %>
-</p>
+  <p>
+    <strong>Content type:</strong>
+    <%= @fileset.attachment.content_type %>
+  </p>
+
+  <p>
+    <strong>Size:</strong>
+    <%= @fileset.attachment.byte_size %>
+  </p>
+
+  <p>
+    <strong>Checksum:</strong>
+    <%= Base64.decode64(@fileset.attachment.checksum).unpack("H*").first %>
+  </p>
+
+  <p>
+    <%= link_to 'Download', rails_blob_path(@fileset.attachment) %>
+  </p>
+
+  <p>
+    <% if @fileset.attachment.previewable? %>
+      <%= link_to image_tag(@fileset.attachment.preview(resize: "300x300>")), @fileset.attachment if @fileset.attachment.previewable? %>
+    <% elsif @fileset.attachment.variable? %>
+      <%= link_to image_tag(@fileset.attachment.variant(resize: "300x300>")), @fileset.attachment if @fileset.attachment.variable? %>
+    <% end %>
+  </p>
+<% end %>
 
 <%= link_to 'Edit', edit_fileset_path(@fileset) %> |
 <%= link_to 'Back', filesets_path %>
