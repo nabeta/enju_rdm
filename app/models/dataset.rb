@@ -7,6 +7,8 @@ class Dataset < ApplicationRecord
   has_many :collections, through: :collection_and_datasets
   has_many :dataset_transitions, class_name: "DatasetTransition", autosave: false
   has_many :reviews, dependent: :destroy
+  has_many :creators, dependent: :destroy
+  has_one :publisher, dependent: :destroy
   has_one_attached :attachment
   has_paper_trail only: [:json_attributes]
 
@@ -16,20 +18,36 @@ class Dataset < ApplicationRecord
     end
   end
 
-  enum visibility: { closed: 1, restricted: 2, open: 3 }
+  enum visibility: { closed: 1, restricted: 2, open_to_public: 3 }
+  enum resource_type: {
+    dataset: 1,
+    article: 2,
+    proceeding: 3,
+    book: 4,
+    part_of_book: 5,
+    report: 6,
+    dissertation: 7,
+    other: 0
+  }
+  enum manuscript_type: {
+    authors_original: 1,
+    under_review: 2,
+    accepted_manuscript: 3,
+    proof: 4,
+    vor: 5,
+    na: 0
+  }
 
   include AttrJson::Record
   include AttrJson::NestedAttributes
-  attr_json :title, :string
   attr_json :alternative_title, :string
-  attr_json :publisher, :string
-  attr_json :creators, Agent.to_type, array: true, default: [Agent.new]
   attr_json :description, :string
   attr_json :keywords, :string, array: true, default: []
   attr_json :language, :string
   attr_json :related_identifiers, RelatedIdentifier.to_type, array: true, default: [RelatedIdentifier.new]
 
-  attr_json_accepts_nested_attributes_for :creators, :related_identifiers
+  accepts_nested_attributes_for :creators, :publisher
+  attr_json_accepts_nested_attributes_for :related_identifiers
 
   include Elasticsearch::Model
 
@@ -97,14 +115,14 @@ class Dataset < ApplicationRecord
     crate.publisher = publisher
 
     filesets.each do |fileset|
-      crate.add_file(ActiveStorage::Blob.service.path_for(fileset.attachment.key), fileset.attachment.filename.to_s)
+      crate.add_file(StringIO.new(fileset.attachment.download), fileset.attachment.filename.to_s)
     end
 
     Tempfile.create(id) do |f|
       Zip::File.open(f, Zip::File::CREATE) do |zip|
         crate.entries.each do |path, entry|
           next if entry.directory?
-          zip.get_output_stream(path) { |s| entry.write(s) }
+          zip.get_output_stream(path) { |s| entry.write_to(s) }
         end
       end
 
@@ -140,10 +158,16 @@ end
 #
 # Table name: datasets
 #
-#  id              :uuid             not null, primary key
-#  json_attributes :jsonb            not null
-#  user_id         :uuid             not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  visibility      :integer          default("closed"), not null
+#  id                :uuid             not null, primary key
+#  json_attributes   :jsonb            not null
+#  user_id           :uuid             not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  visibility        :integer          default("closed"), not null
+#  title             :text             not null
+#  alternative_title :text
+#  description       :text
+#  date_published    :date
+#  resource_type     :integer          default("other"), not null
+#  manuscript_type   :integer          default("na"), not null
 #

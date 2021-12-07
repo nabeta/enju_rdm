@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_11_112145) do
+ActiveRecord::Schema.define(version: 2021_12_07_024056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -61,6 +61,21 @@ ActiveRecord::Schema.define(version: 2021_07_11_112145) do
     t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
+  create_table "creators", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "dataset_id", null: false
+    t.string "name", null: false
+    t.string "orcid"
+    t.string "ror"
+    t.string "affiliation"
+    t.integer "role", default: 1, null: false
+    t.integer "position", default: 1, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_id"], name: "index_creators_on_dataset_id"
+    t.index ["orcid"], name: "index_creators_on_orcid"
+    t.index ["ror"], name: "index_creators_on_ror"
+  end
+
   create_table "dataset_transitions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "to_state", null: false
     t.jsonb "metadata", default: {}, null: false
@@ -79,6 +94,12 @@ ActiveRecord::Schema.define(version: 2021_07_11_112145) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1, null: false
+    t.text "title", null: false
+    t.text "alternative_title"
+    t.text "description"
+    t.date "date_published"
+    t.integer "resource_type", default: 0, null: false
+    t.integer "manuscript_type", default: 0, null: false
     t.index ["user_id"], name: "index_datasets_on_user_id"
     t.index ["visibility"], name: "index_datasets_on_visibility"
   end
@@ -105,6 +126,16 @@ ActiveRecord::Schema.define(version: 2021_07_11_112145) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "publishers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "dataset_id", null: false
+    t.string "name", null: false
+    t.string "ror"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_id"], name: "index_publishers_on_dataset_id"
+    t.index ["ror"], name: "index_publishers_on_ror"
   end
 
   create_table "reviews", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -153,11 +184,13 @@ ActiveRecord::Schema.define(version: 2021_07_11_112145) do
   add_foreign_key "collection_and_datasets", "collections"
   add_foreign_key "collection_and_datasets", "datasets"
   add_foreign_key "collections", "users"
+  add_foreign_key "creators", "datasets"
   add_foreign_key "dataset_transitions", "datasets"
   add_foreign_key "datasets", "users"
   add_foreign_key "doi_records", "datasets"
   add_foreign_key "filesets", "datasets"
   add_foreign_key "profiles", "users"
+  add_foreign_key "publishers", "datasets"
   add_foreign_key "reviews", "datasets"
   add_foreign_key "reviews", "users"
   add_foreign_key "thumbnails", "datasets"

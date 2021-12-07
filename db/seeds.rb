@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Dataset.__elasticsearch__.create_index!
+
+user = User.find_or_initialize_by(email: ENV.fetch('ENJU_RDM_SYSTEM_USER_EMAIL'))
+return if user.persisted?

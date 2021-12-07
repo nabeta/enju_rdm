@@ -61,6 +61,7 @@ jobs:
       run: yarn
     - name: Run tests
       run: |
+        cp .env.test .env
         bundle exec rake db:setup
         bundle exec rake
       env:
