@@ -19,6 +19,7 @@ class Dataset < ApplicationRecord
   end
 
   enum visibility: { closed: 1, restricted: 2, open_to_public: 3 }
+  enum language: { english: 1, japanese: 2, other_language: 0 }
   enum resource_type: {
     dataset: 1,
     article: 2,
@@ -41,9 +42,7 @@ class Dataset < ApplicationRecord
   include AttrJson::Record
   include AttrJson::NestedAttributes
   attr_json :alternative_title, :string
-  attr_json :description, :string
   attr_json :keywords, :string, array: true, default: []
-  attr_json :language, :string
   attr_json :related_identifiers, RelatedIdentifier.to_type, array: true, default: [RelatedIdentifier.new]
 
   accepts_nested_attributes_for :creators, :publisher
@@ -170,4 +169,5 @@ end
 #  date_published    :date
 #  resource_type     :integer          default("other"), not null
 #  manuscript_type   :integer          default("na"), not null
+#  language          :integer          default("english"), not null
 #

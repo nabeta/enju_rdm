@@ -39,4 +39,5 @@ end
 #  date_published    :date
 #  resource_type     :integer          default("other"), not null
 #  manuscript_type   :integer          default("na"), not null
+#  language          :integer          default("english"), not null
 #

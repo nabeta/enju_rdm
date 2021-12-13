@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_07_024056) do
+ActiveRecord::Schema.define(version: 2021_12_11_151052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(version: 2021_12_07_024056) do
     t.date "date_published"
     t.integer "resource_type", default: 0, null: false
     t.integer "manuscript_type", default: 0, null: false
+    t.integer "language", default: 1, null: false
     t.index ["user_id"], name: "index_datasets_on_user_id"
     t.index ["visibility"], name: "index_datasets_on_visibility"
   end
